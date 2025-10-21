@@ -2,12 +2,16 @@
 
 Focused backend engineering growth — disciplined practice, traceable outcomes. This repository documents a structured journey to build mastery in **Java, SQL, REST APIs, and DevOps fundamentals** while developing professional workflow and portfolio discipline.
 
-## Personal Mission Statement
+---
+
+## 🎯 Personal Mission Statement
 
 > I aim to become a backend developer capable of designing reliable, maintainable, and scalable systems.
 > This portfolio reflects disciplined daily execution, clear deliverables, and long-term professional growth.
 
-## Development Phases Overview
+---
+
+## 🗺️ Development Phases Overview
 
 The path is organized into **three progressive phases**. Phase 1 is executed now; Phases 2–3 define the forward vision.
 
@@ -21,7 +25,7 @@ The path is organized into **three progressive phases**. Phase 1 is executed now
     Consolidate production practices and present a hire-ready portfolio.
     **Focus:** polish documentation, harden CI/CD, add monitoring/observability notes, and prepare targeted, evidence-based case studies of the projects delivered in Phases 1–2.
 
-## Phase 1 Overview (14 Days)
+### 📅 Phase 1 Overview (14 Days)
 
 - **Days 1–3:** Git workflow, branching strategy, commit conventions, PR practice.
 - **Days 4–5:** REST fundamentals; CRUD endpoints; status codes; error handling.
@@ -31,9 +35,11 @@ The path is organized into **three progressive phases**. Phase 1 is executed now
 - **Days 11–14:** Basic CI with GitHub Actions; job materials; interview prep; Phase 2 plan.
 
 Track progress and daily execution on the **Project Board**: 
-[https://github.com/users/rubenrzprz/projects/2](https://github.com/users/rubenrzprz/projects/2)
+🔗 **Project Board** — [https://github.com/users/rubenrzprz/projects/2](https://github.com/users/rubenrzprz/projects/2)
 
-## Repository Structure
+---
+
+## 🗂️ Repository Structure
 
 ```
 / 
@@ -46,7 +52,9 @@ Track progress and daily execution on the **Project Board**:
 └── README.md
 ```
 
-## Core Technologies
+---
+
+## 🧰 Core Technologies
 
 - **Language:** Java (primary)
 - **IDE:** IntelliJ IDEA
@@ -55,7 +63,9 @@ Track progress and daily execution on the **Project Board**:
 - **DevOps:** Docker, docker-compose; GitHub Actions (Phase 2+)
 - **Collaboration:** Git (branching/PRs), GitHub Issues/Projects
 
-## How to Use / Explore
+---
+
+## 🧭 How to Use / Explore
 
 - **Clone the repository:**
 	`git clone https://github.com/<your-username>/backend-portfolio.git`
@@ -66,7 +76,9 @@ Track progress and daily execution on the **Project Board**:
 - **Explore code & scripts:** see `src/` and `sql/` as they evolve with each day.
 - **Traceability:** commits reference issues (e.g., `Closes #2`) to maintain a clean audit trail.
 
-## Author
+---
+
+## 👤 Author
 
 **Ruben R.P.** — backend-focused developer in training.  
 Purpose-driven, disciplined, and oriented toward scalable, maintainable systems.
