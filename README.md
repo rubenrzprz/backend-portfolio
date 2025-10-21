@@ -1,34 +1,84 @@
 # Backend Portfolio
 
-This repository contains a curated collection of backend development exercises, mini-projects, and learning checkpoints. It demonstrates skills in **Java, Node.js, SQL, REST APIs, Git workflows, Docker, and CI/CD pipelines**. It also serves as a living record of a structured **14-day Phase 1 backend learning sprint**.
+Focused backend engineering growth — disciplined practice, traceable outcomes. This repository documents a structured journey to build mastery in **Java, SQL, REST APIs, and DevOps fundamentals** while developing professional workflow and portfolio discipline.
 
-## Personal Mission Statement
+---
 
-> I aim to become a backend developer capable of designing reliable, maintainable, and scalable systems. This portfolio reflects my journey in mastering core backend skills while building projects that can be expanded for real-world applications.
+## 🎯 Personal Mission Statement
 
-## Phase 1 Roadmap
+> I aim to become a backend developer capable of designing reliable, maintainable, and scalable systems.
+> This portfolio reflects disciplined daily execution, clear deliverables, and long-term professional growth.
 
-The first 14 days focus on:
+---
 
-1. Git fundamentals and disciplined version control
-2. REST API design and CRUD operations
-3. SQL database integration
-4. Docker containerization and basic DevOps
-5. Portfolio documentation, CV, LinkedIn, and job preparation
+## 🗺️ Development Phases Overview
 
-Check the **Project board** for detailed daily tasks: [Project Board Link](https://github.com/users/rubenrzprz/projects/2)
+The path is organized into **three progressive phases**. Phase 1 is executed now; Phases 2–3 define the forward vision.
 
-## Projects & Exercises
+- **Phase 1 — Foundation & Positioning (Weeks 1–2)**  
+    Polish fundamentals; build a clean public presence and materials.  
+    **Focus:** Git discipline (branching/commits/PRs), REST design + Postman, SQL (joins, subqueries, indexes, normalization), personal brand (CV, LinkedIn, pinned projects, mission). 
+- **Phase 2 — Proof of Skill & Portfolio (Weeks 3–6)**  
+    Demonstrate capability via 1–2 small, complete backend projects.  
+    **Focus:** Spring Boot (Java) projects (e.g., task manager API); optional second project (e.g., financial tracker with auth); deploy to Render/Railway/Heroku; add tests + CI (GitHub Actions); strong READMEs.
+- **Phase 3 — Professional Execution (Weeks 6–12)**  
+    Consolidate production practices and present a hire-ready portfolio.
+    **Focus:** polish documentation, harden CI/CD, add monitoring/observability notes, and prepare targeted, evidence-based case studies of the projects delivered in Phases 1–2.
 
-- **Day 1–3:** Git workflow practice, branch management, and commit conventions  
-- **Day 4–5:** REST API basics, CRUD endpoints, and error handling  
-- **Day 6–7:** SQL exercises and database-backed API integration  
-- **Day 8:** Docker and local deployment with docker-compose  
-- **Day 9–10:** CV drafting, LinkedIn summary, and portfolio polish  
-- **Day 11–14:** CI/CD setup, job application materials, interview prep, and Phase 2 planning
+### 📅 Phase 1 Overview (14 Days)
 
-## How to Use / Explore
+- **Days 1–3:** Git workflow, branching strategy, commit conventions, PR practice.
+- **Days 4–5:** REST fundamentals; CRUD endpoints; status codes; error handling.
+- **Days 6–7:** SQL fundamentals; DB schema; integrate DB with API.
+- **Day 8:** Dockerize app; local stack with `docker-compose`.
+- **Days 9–10:** CV, LinkedIn, portfolio polish (documentation and presentation).
+- **Days 11–14:** Basic CI with GitHub Actions; job materials; interview prep; Phase 2 plan.
 
-- Clone the repository:
-```bash
-git clone https://github.com/<your-username>/backend-portfolio.git
+Track progress and daily execution on the **Project Board**: 
+🔗 **Project Board** — [https://github.com/users/rubenrzprz/projects/2](https://github.com/users/rubenrzprz/projects/2)
+
+---
+
+## 🗂️ Repository Structure
+
+```
+/ 
+├── progress/                     # Daily summaries & learnings (day1-summary.md, day2-summary.md, …) 
+├── src/                          # Exercises and mini-projects (Java-first) 
+├── sql/                          # SQL scripts, queries, and migration examples 
+├── .github/ 
+│   ├── PULL_REQUEST_TEMPLATE.md  # PR checklist & structure 
+│   └── workflows/                # CI/CD (Phase 2+) 
+└── README.md
+```
+
+---
+
+## 🧰 Core Technologies
+
+- **Language:** Java (primary)
+- **IDE:** IntelliJ IDEA
+- **APIs:** REST (HTTP semantics, CRUD patterns, error handling)
+- **Databases:** PostgreSQL / SQLite (learning & integration)
+- **DevOps:** Docker, docker-compose; GitHub Actions (Phase 2+)
+- **Collaboration:** Git (branching/PRs), GitHub Issues/Projects
+
+---
+
+## 🧭 How to Use / Explore
+
+- **Clone the repository:**
+	`git clone https://github.com/rubenrzprz/backend-portfolio.git`
+- **Browse execution artifacts:**
+	- **Issues**: day-by-day checklists.
+	- **Project Board**: To Do / Doing / Done flow with linked issues.
+	- **progress/**: daily summaries and insights.
+- **Explore code & scripts:** see `src/` and `sql/` as they evolve with each day.
+- **Traceability:** commits reference issues (e.g., `Closes #2`) to maintain a clean audit trail.
+
+---
+
+## 👤 Author
+
+**Ruben R.P.** — backend-focused developer in training.  
+Purpose-driven, disciplined, and oriented toward scalable, maintainable systems.
