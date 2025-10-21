@@ -68,7 +68,7 @@ Track progress and daily execution on the **Project Board**:
 ## 🧭 How to Use / Explore
 
 - **Clone the repository:**
-	`git clone https://github.com/<your-username>/backend-portfolio.git`
+	`git clone https://github.com/rubenrzprz/backend-portfolio.git`
 - **Browse execution artifacts:**
 	- **Issues**: day-by-day checklists.
 	- **Project Board**: To Do / Doing / Done flow with linked issues.
