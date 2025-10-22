@@ -1,0 +1,45 @@
+# --- Java / Build ---
+target/
+out/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven / Gradle
+.mvn/
+.settings/
+dependency-reduced-pom.xml
+.build/
+.gradle/
+**/build/
+
+# --- IntelliJ IDEA ---
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code (if ever used)
+.vscode/
+
+# --- Logs / Coverage ---
+*.log
+logs/
+coverage/
+jacoco.exec
+
+# --- OS / Editor ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# --- Env / Local config ---
+.env
+.env.*
+!.env.example
+
+# --- Misc ---
+# Ignore local Postman scratch exports; keep curated ones under /postman
+postman/tmp/
