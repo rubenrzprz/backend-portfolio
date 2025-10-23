@@ -1,0 +1,17 @@
+{
+  "info": {
+    "name": "backend-portfolio",
+    "_postman_id": "bp-collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": { "method": "GET", "url": "{{baseUrl}}/health" }
+    },
+    {
+      "name": "Items",
+      "request": { "method": "GET", "url": "{{baseUrl}}/items" }
+    }
+  ]
+}
