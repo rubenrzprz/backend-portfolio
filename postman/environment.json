@@ -1,0 +1,7 @@
+{
+  "id": "backend-portfolio-env",
+  "name": "backend-portfolio-local",
+  "values": [
+    { "key": "baseUrl", "value": "http://localhost:8080", "enabled": true }
+  ]
+}
