@@ -21,8 +21,7 @@ public class ItemService {
     }
 
     public Item get(Long id) {
-        return repo.findById(id).orElseThrow(() ->
-                new NotFoundException("Item %d not found".formatted(id)));
+        return repo.findById(id).orElseThrow(() -> new ItemNotFoundException(id));
     }
 
     public Item create(ItemCreateRequest req) {
@@ -32,24 +31,19 @@ public class ItemService {
     }
 
     public Item replace(Long id, ItemUpdateRequest req) {
-        if(!repo.existsById(id)) {
-            throw new NotFoundException("Item %d not found".formatted(id));
-        }
+        if(!repo.existsById(id)) throw new ItemNotFoundException(id);
         Item updated = new Item(id, req.name());
         return repo.save(updated);
     }
 
     public Item patchName(Long id, ItemUpdateRequest req) {
-        Item current = repo.findById(id).orElseThrow(() ->
-                new NotFoundException("Item %d not found".formatted(id)));
+        Item current = repo.findById(id).orElseThrow(() -> new ItemNotFoundException(id));
         Item updated = new Item(id, req.name());
         return repo.save(updated);
     }
 
     public void delete(Long id) {
-        if(!repo.existsById(id)) {
-            throw new NotFoundException("Item %d not found".formatted(id));
-        }
+        if(!repo.existsById(id)) throw new ItemNotFoundException(id);
         repo.deleteById(id);
     }
 }
