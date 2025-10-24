@@ -1,10 +1,5 @@
 package com.ruben.backendportfolio.items;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import com.ruben.backendportfolio.validation.ValidName;
 
-public record ItemCreateRequest(
-   @NotBlank(message = "name is required")
-   @Size(min = 2, max = 40, message = "name must be 2-40 chars")
-   String name
-) {}
+public record ItemCreateRequest(@ValidName String name) {}
