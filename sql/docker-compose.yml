@@ -1,0 +1,20 @@
+services:
+  db:
+    image: postgres:16
+    container_name: bp_pg
+    env_file:
+      - ../.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - bp_pg_data:/var/lib/postgresql/data
+      # Mount the whole sql/ folder read-only
+      - ./:/sql:ro
+      # Make only sql/results writable (overrides the ro above for that subpath)
+      - ./results:/sql/results:rw
+volumes:
+  bp_pg_data:

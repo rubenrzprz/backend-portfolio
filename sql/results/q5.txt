@@ -1,0 +1,6 @@
+ user_id | user_name 
+---------+-----------
+       1 | Ruben
+       3 | Mateo
+(2 rows)
+
