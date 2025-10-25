@@ -1,0 +1,8 @@
+ user_id | user_name | task_count 
+---------+-----------+------------
+       1 | Ruben     |          3
+       3 | Mateo     |          2
+       2 | Elena     |          1
+       4 | Lucia     |          0
+(4 rows)
+

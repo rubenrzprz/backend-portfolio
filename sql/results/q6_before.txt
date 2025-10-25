@@ -1,0 +1,13 @@
+DROP INDEX
+                                           QUERY PLAN                                           
+------------------------------------------------------------------------------------------------
+ Seq Scan on tasks  (cost=0.00..1.07 rows=1 width=88) (actual time=0.005..0.006 rows=3 loops=1)
+   Filter: (user_id = 1)
+   Rows Removed by Filter: 3
+   Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=6
+ Planning Time: 0.071 ms
+ Execution Time: 0.014 ms
+(8 rows)
+
