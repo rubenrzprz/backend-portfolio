@@ -9,11 +9,9 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ItemService {
 
     private final ItemRepository repo;
-    private final AtomicLong idSeq = new AtomicLong(0L);
 
-    public ItemService() {
-        // Later we'll inject a JPA repository here instead
-        this.repo = new InMemoryItemRepository();
+    public ItemService(ItemRepository repo) {
+        this.repo = repo;
     }
 
     public List<Item> list() {
@@ -25,20 +23,20 @@ public class ItemService {
     }
 
     public Item create(ItemCreateRequest req) {
-        long id = idSeq.incrementAndGet();
-        Item item = new Item(id, req.name());
-        return repo.save(item);
+        Item toSave = new Item(null, req.name());
+        return repo.save(toSave);
     }
 
     public Item replace(Long id, ItemUpdateRequest req) {
-        if(!repo.existsById(id)) throw new ItemNotFoundException(id);
+        repo.findById(id).orElseThrow(() -> new ItemNotFoundException(id));
         Item updated = new Item(id, req.name());
         return repo.save(updated);
     }
 
     public Item patchName(Long id, ItemUpdateRequest req) {
         Item current = repo.findById(id).orElseThrow(() -> new ItemNotFoundException(id));
-        Item updated = new Item(id, req.name());
+        String newName = (req.name() != null && !req.name().isBlank()) ? req.name() : current.name();
+        Item updated = new Item(id, newName);
         return repo.save(updated);
     }
 
