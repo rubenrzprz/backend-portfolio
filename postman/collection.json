@@ -1,17 +1,355 @@
 {
-  "info": {
-    "name": "backend-portfolio",
-    "_postman_id": "bp-collection",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Health",
-      "request": { "method": "GET", "url": "{{baseUrl}}/health" }
-    },
-    {
-      "name": "Items",
-      "request": { "method": "GET", "url": "{{baseUrl}}/items" }
-    }
-  ]
+	"info": {
+		"_postman_id": "4e7658ae-2fc7-43de-85c2-9fa18eb6b1dd",
+		"name": "backend-portfolio",
+		"description": "Spring Boot API — health + /items CRUD with simple tests and id chaining.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49492446",
+		"_collection_link": "https://rubenrzprz-5194126.postman.co/workspace/Ruben-R.P.'s-Workspace~b5be9b16-3478-4861-82c8-6170d0fb6318/collection/49492446-4e7658ae-2fc7-43de-85c2-9fa18eb6b1dd?action=share&source=collection_link&creator=49492446"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('status is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"pm.test('has ok status', function () {",
+							"  const j = pm.response.json();",
+							"  pm.expect(j.status).to.eql('ok');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/health",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Items — Create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('status is 201', function () {",
+							"  pm.response.to.have.status(201);",
+							"});",
+							"pm.test('captures id and Location header', function () {",
+							"  const j = pm.response.json();",
+							"  pm.expect(j).to.have.property('id');",
+							"  pm.expect(pm.response.headers.get('Location')).to.include('/items/');",
+							"  pm.environment.set('itemId', j.id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"alpha\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/items",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Items — List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('status is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"pm.test('returns array', function () {",
+							"  pm.expect(pm.response.json()).to.be.an('array');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/items",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Items — Get by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('status is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"pm.test('id matches env itemId', function () {",
+							"  const j = pm.response.json();",
+							"  pm.expect(j.id).to.eql(Number(pm.environment.get('itemId')));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/items/{{itemId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"items",
+						"{{itemId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Items — Put (replace)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('status is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"pm.test('name updated', function () {",
+							"  pm.expect(pm.response.json().name).to.eql('alpha-2');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"alpha-2\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/items/{{itemId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"items",
+						"{{itemId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Items — Patch (name only)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('status is 200', function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"pm.test('name patched', function () {",
+							"  pm.expect(pm.response.json().name).to.eql('alpha-3');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"alpha-3\"\n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/items/{{itemId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"items",
+						"{{itemId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Items — Delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('status is 204', function () {",
+							"  pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/items/{{itemId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"items",
+						"{{itemId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Errors — Create invalid (400)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('status is 400', function () {",
+							"  pm.response.to.have.status(400);",
+							"});",
+							"pm.test('validation_error with details', function () {",
+							"  const j = pm.response.json();",
+							"  pm.expect(j.error).to.eql('validation_error');",
+							"  pm.expect(j.details).to.be.an('array');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"\" \n}"
+				},
+				"url": {
+					"raw": "{{baseUrl}}/items",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Errors — Get unknown id (404)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('status is 404', function () {",
+							"  pm.response.to.have.status(404);",
+							"});",
+							"pm.test('not_found error code', function () {",
+							"  const j = pm.response.json();",
+							"  pm.expect(j.error).to.eql('not_found');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/items/999999",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"items",
+						"999999"
+					]
+				}
+			},
+			"response": []
+		}
+	]
 }
