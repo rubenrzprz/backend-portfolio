@@ -109,7 +109,22 @@ Exit with `\q`.
 
 ---
 
-## Load schema & seed (manual)
+## Load schema & seed
+
+### Auto-init (first run only)
+
+The Postgres container runs `/docker-entrypoint-initdb.d/*.sql` **only when the data volume is new/empty**.
+
+To trigger auto-init (this wipes data):
+```bash
+docker compose down -v
+docker compose up -d
+docker compose logs db
+```
+
+Look for log lines mentioning 01-schema.sql and 02-seed.sql. After that, tables and seed data are present. For existing volumes, run schema.sql / seed.sql manually as shown below.
+
+### Manual
 
 From the psql prompt (inside the container):
 
