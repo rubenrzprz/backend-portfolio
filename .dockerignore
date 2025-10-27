@@ -1,0 +1,9 @@
+# Files excluded from the build context
+target
+.git
+.gitignore
+**/*.iml
+.idea
+.DS_Store
+.env
+sql/results
