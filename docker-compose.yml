@@ -14,6 +14,9 @@ services:
       - ./sql:/sql:ro
       # Make only sql/results writable (overrides the ro above for that subpath)
       - ./sql/results:/sql/results:rw
+      # Load init SQL script when container is mounted for the first time
+      - ./sql/init/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./sql/init/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
   app:
     build:
       context: .
