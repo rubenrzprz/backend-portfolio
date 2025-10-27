@@ -1,21 +1,22 @@
 # SQL & Local Database Guide
 
-Run **PostgreSQL** for this repo using **Docker Compose** (from the **repo root**), load schema/seed data, run queries, and capture results—without installing Postgres locally.
+This document covers running **PostgreSQL** for the project using **Docker Compose** from the **repo root**, loading  schema/seed data, and running queries with reproducible outputs.
 
 ---
 
 ## Prerequisites
 
 * Docker Desktop / Docker Engine
-* Docker Compose (bundled with recent Docker)
+* Docker Compose (bundled with recent Docker versions)
 
-> We run `psql` **inside** the container, so you don’t need a local client.
+> We run `psql` **inside** the container, so a local Postgres client is not necessary.
 
 ---
 
 ## Environment & `.env`
 
-Because `docker-compose.yml` is at the **repo root**, Docker Compose **auto-loads** the `.env` file in the **same folder**. You can usually run commands **without** `--env-file`.
+Because `docker-compose.yml` lives at the **repo root**, Docker Compose **auto-loads** the `.env` file in the **same
+folder**. You can usually run commands **without** `--env-file`.
 
 **Defaults (see `.env.example`):**
 
@@ -26,10 +27,17 @@ POSTGRES_DB=bp_db
 POSTGRES_PORT=5432
 ```
 
-> **Note:** You can still be explicit if you want:
-> `docker compose --env-file ./.env up -d`
-> Or use an alternate env file (e.g., CI):
-> `docker compose --env-file ./.env.ci up -d`
+You can still be explicit if you want:
+
+```bash
+docker compose --env-file ./.env up -d
+```
+
+Or use an alternate env file (e.g., CI):
+
+```bash
+docker compose --env-file ./.env.ci up -d
+```
 
 ---
 
@@ -48,17 +56,24 @@ Compose mounts:
 * `./sql/results` → `/sql/results` (read–write)
 * `bp_pg_data` → `/var/lib/postgresql/data` → **Named Docker volume** that persists your database files
 
-
 Anything you write to `/sql/results` **appears** in `sql/results/` in the repo.
 
 ---
 
-## Start / Stop / Reset (from repo root)
+## Run Postgres (Docker)
 
-Start Postgres:
+### Start containers
+
+**Default (API + DB):**
 
 ```bash
 docker compose up -d
+```
+
+**DB-only (preferred for SQL exercises):**
+
+```bash
+docker compose up -d db
 ```
 
 See running containers:
@@ -67,30 +82,24 @@ See running containers:
 docker compose ps
 ```
 
-Stop (keeps the data volume):
+Stop everything (keeps data volume):
 
 ```bash
 docker compose down
 ```
 
-Reset **everything** (containers + named volumes; **wipes DB data**):
+Reset everything (containers + named volume; **wipes DB data**):
 
 ```bash
 docker compose down -v
 ```
 
-Preview resolved config (shows env interpolation):
-
-```bash
-docker compose config
-```
-
 ---
 
-## Connect with psql (inside the container)
+## Connect with `psql` (inside the container)
 
-> We always open a shell **inside** the container first, then run `psql`.
-> This ensures credentials come from the **container** environment, not your host.
+We always open a shell **inside** the container first, then run `psql` so credentials come from the **container**
+environment.
 
 Open a shell:
 
@@ -98,14 +107,14 @@ Open a shell:
 docker compose exec db bash
 ```
 
-Then run `psql` inside the container:
+Then run `psql`:
 
 ```bash
 psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"
 -- You should see a prompt like:  bp_db=#
 ```
 
-Exit with `\q`.
+Exit `psql` with `\q`, then `exit` to leave the container shell.
 
 ---
 
@@ -113,34 +122,34 @@ Exit with `\q`.
 
 ### Auto-init (first run only)
 
-The Postgres container runs `/docker-entrypoint-initdb.d/*.sql` **only when the data volume is new/empty**.
+The Postgres container executes any `*.sql` under `/docker-entrypoint-initdb.d/` **only when the data volume is
+new/empty**.
 
-To trigger auto-init (this wipes data):
+* `sql/init/schema.sql` → `/docker-entrypoint-initdb.d/01-schema.sql`
+* `sql/init/seed.sql`   → `/docker-entrypoint-initdb.d/02-seed.sql`
+
+To trigger auto-init (⚠️ wipes DB data):
+
 ```bash
 docker compose down -v
 docker compose up -d
-docker compose logs db
+docker compose logs db # look for 01-schema.sql / 02-seed.sql
 ```
-
-Look for log lines mentioning 01-schema.sql and 02-seed.sql. After that, tables and seed data are present. For existing volumes, run schema.sql / seed.sql manually as shown below.
 
 ### Manual
 
-From the psql prompt (inside the container):
+If you’re not resetting the volume, run the scripts manually.
 
-```sql
--- apply schema and seed from the read-only mount
-\i /sql/init/schema.sql
-\i /sql/init/seed.sql
+Inside the DB container shell:
 
--- quick checks
-SELECT COUNT(*) AS users FROM users;
-SELECT COUNT(*) AS tasks FROM tasks;
+```bash
+psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /sql/init/schema.sql
+psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /sql/init/seed.sql
 ```
 
 ---
 
-## Run queries & capture results
+## Run prepared queries & capture results
 
 Use `\o` to direct output into the **writeable** path `/sql/results/` (which maps to `sql/results/` on your host).
 
@@ -178,7 +187,8 @@ The files will appear in `sql/results/` in the repo.
 
 ## Useful one-liners (still use container env)
 
-If you prefer not to enter an interactive shell, you can run a one-liner that **starts a shell inside the container** (so env vars resolve there) and then calls `psql`:
+If you prefer not to enter an interactive shell, run a one-liner that starts a shell **inside** the container and then
+calls `psql`:
 
 List tables:
 
@@ -214,8 +224,8 @@ docker compose up -d
 
 **Tables missing after start**
 
-* If this is a fresh volume, you still need to run `schema.sql` and `seed.sql` **manually** (see above).
-  *(Auto-init is not enabled in this repo at the moment.)*
+* If this is a fresh volume and auto-init is enabled, ensure you started from a clean slate (`docker compose down -v`).
+* Otherwise, run `schema.sql` and `seed.sql` manually.
 
 **Env vars look wrong**
 
@@ -229,16 +239,3 @@ Ensure the folder exists:
 ```bash
 mkdir -p sql/results
 ```
-
-## Why we use a named volume (`bp_pg_data`)
-
-* Persists database files across container restarts.
-* You only lose data if you explicitly run `down -v`.
-* Safer and cleaner than bind-mounting Postgres internals into your repo.
-
----
-
-## Good practices
-
-* Never commit real credentials. Keep `.env` local; commit `.env.example` only.
-* Store all outputs under `sql/results/` for reproducibility and review.
