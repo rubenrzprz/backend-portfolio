@@ -2,8 +2,6 @@ services:
   db:
     image: postgres:16
     container_name: bp_pg
-    env_file:
-      - ./.env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -16,5 +14,21 @@ services:
       - ./sql:/sql:ro
       # Make only sql/results writable (overrides the ro above for that subpath)
       - ./sql/results:/sql/results:rw
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bp_app
+    depends_on:
+      - db
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8080/health || exit 1" ]
+      interval: 10s
+      timeout: 2s
+      retries: 10
 volumes:
   bp_pg_data:
