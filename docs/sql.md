@@ -1,31 +1,23 @@
-# SQL — Local PostgreSQL (Docker-only, no native client)
+# SQL & Local Database Guide
 
-This guide explains how to run PostgreSQL **in Docker**, apply schema/seed scripts, execute queries, and capture results — all **from inside the container**.
-It reflects the current repo setup:
-
-* `.env` lives at the **repo root** (not committed).
-* Docker Compose file lives in **`sql/docker-compose.yml`**.
-* The container mounts:
-
-    * the whole **`sql/`** folder **read-only** at `/sql`
-    * **`sql/results/`** **read-write** at `/sql/results` (so query outputs are saved to your host)
-* A named volume `bp_pg_data` persists database files between restarts.
+Run **PostgreSQL** for this repo using **Docker Compose** (from the **repo root**), load schema/seed data, run queries, and capture results—without installing Postgres locally.
 
 ---
 
 ## Prerequisites
 
-* **Docker Desktop** (includes Docker Engine + Compose v2)
-* A root **`.env`** file (create it from the example)
+* Docker Desktop / Docker Engine
+* Docker Compose (bundled with recent Docker)
 
-Create `.env` at the repo root:
+> We run `psql` **inside** the container, so you don’t need a local client.
 
-```bash
-cp .env.example .env
-# Edit if needed; defaults are safe for local dev
-```
+---
 
-`.env` keys used:
+## Environment & `.env`
+
+Because `docker-compose.yml` is at the **repo root**, Docker Compose **auto-loads** the `.env` file in the **same folder**. You can usually run commands **without** `--env-file`.
+
+**Defaults (see `.env.example`):**
 
 ```
 POSTGRES_USER=bp_user
@@ -34,80 +26,92 @@ POSTGRES_DB=bp_db
 POSTGRES_PORT=5432
 ```
 
-> `.env` is ignored by Git. Only `.env.example` is committed.
+> **Note:** You can still be explicit if you want:
+> `docker compose --env-file ./.env up -d`
+> Or use an alternate env file (e.g., CI):
+> `docker compose --env-file ./.env.ci up -d`
 
 ---
 
-## Compose layout & mounts (what’s inside the container)
+## Repository Layout (SQL)
 
-From `sql/docker-compose.yml`:
+```
+sql/
+├─ init/          # schema.sql, seed.sql
+├─ queries/       # q1.sql ... q8.sql (+ q6_before.sql / q6_after.sql)
+└─ results/       # captured outputs via \o (created by you)
+```
 
-* `./:/sql:ro` → Your repo’s `sql/` directory is **read-only** at `/sql`
-* `./results:/sql/results:rw` → Only `sql/results/` is **writeable** (for `\o` outputs)
-* `bp_pg_data:/var/lib/postgresql/data` → **Named Docker volume** that persists your database files
+Compose mounts:
 
-**Implications**
+* `./sql` → `/sql` (read-only)
+* `./sql/results` → `/sql/results` (read–write)
+* `bp_pg_data` → `/var/lib/postgresql/data` → **Named Docker volume** that persists your database files
 
-* Read scripts via **`/sql/...`** (e.g., `/sql/init/schema.sql`)
-* Write outputs to **`/sql/results/...`** (e.g., `/sql/results/q1.txt`)
-* A normal `down` **keeps** your data; `down -v` **resets** it
+
+Anything you write to `/sql/results` **appears** in `sql/results/` in the repo.
 
 ---
 
-## Start / Stop the database
+## Start / Stop / Reset (from repo root)
 
-> Run these from the **repo root** so the relative compose path works.
-> We always pass the root env file with `--env-file ./.env`.
-
-**Start (detached):**
+Start Postgres:
 
 ```bash
-docker compose -f sql/docker-compose.yml --env-file ./.env up -d
+docker compose up -d
 ```
 
-**Check status:**
+See running containers:
 
 ```bash
-docker compose -f sql/docker-compose.yml --env-file ./.env ps
+docker compose ps
 ```
 
-**Stop (keep data):**
+Stop (keeps the data volume):
 
 ```bash
-docker compose -f sql/docker-compose.yml --env-file ./.env down
+docker compose down
 ```
 
-**Stop + remove volume (full reset):**
+Reset **everything** (containers + named volumes; **wipes DB data**):
 
 ```bash
-docker compose -f sql/docker-compose.yml --env-file ./.env down -v
+docker compose down -v
+```
+
+Preview resolved config (shows env interpolation):
+
+```bash
+docker compose config
 ```
 
 ---
 
-## Connect with `psql` (inside the container)
+## Connect with psql (inside the container)
 
-Open a shell in the `db` service:
+> We always open a shell **inside** the container first, then run `psql`.
+> This ensures credentials come from the **container** environment, not your host.
+
+Open a shell:
 
 ```bash
-docker compose -f sql/docker-compose.yml --env-file ./.env exec db bash
+docker compose exec db bash
 ```
 
-Connect to Postgres:
+Then run `psql` inside the container:
 
 ```bash
 psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"
 -- You should see a prompt like:  bp_db=#
 ```
 
-> If env vars aren’t visible inside the shell, you can use explicit values:
-> `psql -U bp_user -d bp_db`
+Exit with `\q`.
 
 ---
 
-## Apply schema & seed
+## Load schema & seed (manual)
 
-From the `psql` prompt (inside the container):
+From the psql prompt (inside the container):
 
 ```sql
 -- apply schema and seed from the read-only mount
@@ -153,89 +157,63 @@ CREATE INDEX IF NOT EXISTS idx_tasks_user_id ON tasks(user_id);
 
 > Tip: use `EXPLAIN (ANALYZE, BUFFERS)` in the `q6_*` scripts to view real timings and buffer usage.
 
----
-
-## Folder layout (conventions)
-
-```
-sql/
-├─ docker-compose.yml
-├─ init/
-│  ├─ schema.sql
-│  └─ seed.sql
-├─ queries/
-│  ├─ q1.sql … q8.sql
-│  ├─ q6_before.sql
-│  └─ q6_after.sql
-└─ results/                  ← writeable mount (files created here by \o)
-   ├─ q1.txt … q8.txt
-   ├─ q6_before.txt
-   └─ q6_after.txt
-```
+The files will appear in `sql/results/` in the repo.
 
 ---
 
-## Useful commands
+## Useful one-liners (still use container env)
+
+If you prefer not to enter an interactive shell, you can run a one-liner that **starts a shell inside the container** (so env vars resolve there) and then calls `psql`:
+
+List tables:
 
 ```bash
-# Start DB (uses root .env)
-docker compose -f sql/docker-compose.yml --env-file ./.env up -d
+docker compose exec db bash -lc 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "\dt"'
+```
 
-# Shell into the DB container
-docker compose -f sql/docker-compose.yml --env-file ./.env exec db bash
+Run a single query:
 
-# One-off SQL from host (no shell), e.g., count rows
-docker compose -f sql/docker-compose.yml --env-file ./.env exec -T db \
-  psql -U bp_user -d bp_db -c "SELECT COUNT(*) FROM users;"
+```bash
+docker compose exec db bash -lc \
+'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT id, title FROM tasks ORDER BY id LIMIT 5;"'
+```
+
+Export query output to a file:
+
+```bash
+docker compose exec db bash -lc \
+'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "\o /sql/results/q7.txt" -c "\i /sql/queries/q7.sql" -c "\o"'
 ```
 
 ---
 
 ## Troubleshooting
 
-* **“variable not set” warnings**
-  
-Always pass the env file when running Compose commands:
+**Port 5432 already in use**
+Another Postgres is running locally. Stop it or change `POSTGRES_PORT` in `.env`, then:
 
-  ```
-  docker compose -f sql/docker-compose.yml --env-file ./.env <cmd>
-  ```
+```bash
+docker compose down
+docker compose up -d
+```
 
-* **Schema/seed path not found**
-  
-Remember scripts live at **`/sql/...`** inside the container:
+**Tables missing after start**
 
-  ```
-  \i /sql/init/schema.sql
-  \i /sql/init/seed.sql
-  ```
+* If this is a fresh volume, you still need to run `schema.sql` and `seed.sql` **manually** (see above).
+  *(Auto-init is not enabled in this repo at the moment.)*
 
-* **Cannot write outputs**
-  
-Write to the **mounted writeable path**:
+**Env vars look wrong**
 
-  ```
-  \o /sql/results/q1.txt
-  ```
+* Run `docker compose config` from the repo root to see the interpolated values.
+* Remember: the recommended flow is to open a shell **inside** the container and run `psql` there.
 
-* **Port 5432 in use**
-  
-Change `POSTGRES_PORT` in `.env` (e.g., `5433`), then restart:
+**Cannot write to results**
 
-  ```
-  docker compose -f sql/docker-compose.yml --env-file ./.env down
-  docker compose -f sql/docker-compose.yml --env-file ./.env up -d
-  ```
+Ensure the folder exists:
 
-* **Reset database to a clean state**
-  
-Use `down -v` to remove the named volume:
-
-  ```
-  docker compose -f sql/docker-compose.yml --env-file ./.env down -v
-  ```
-
----
+```bash
+mkdir -p sql/results
+```
 
 ## Why we use a named volume (`bp_pg_data`)
 
