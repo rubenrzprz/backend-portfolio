@@ -1,4 +1,6 @@
-package com.ruben.backendportfolio.items;
+package com.ruben.backendportfolio.items.repository;
+
+import com.ruben.backendportfolio.items.domain.Item;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class InMemoryItemRepository implements ItemRepository {
+public class ItemRepositoryInMemory implements ItemRepository {
     private final Map<Long, Item> store = new ConcurrentHashMap<>();
 
     @Override

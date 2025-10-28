@@ -1,4 +1,4 @@
-package com.ruben.backendportfolio.items;
+package com.ruben.backendportfolio.errors;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {

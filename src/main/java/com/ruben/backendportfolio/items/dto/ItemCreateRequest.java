@@ -1,4 +1,4 @@
-package com.ruben.backendportfolio.items;
+package com.ruben.backendportfolio.items.dto;
 
 import com.ruben.backendportfolio.validation.ValidName;
 

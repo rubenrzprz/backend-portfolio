@@ -1,4 +1,4 @@
-package com.ruben.backendportfolio.data;
+package com.ruben.backendportfolio.tasks.domain;
 
 import jakarta.persistence.*;
 

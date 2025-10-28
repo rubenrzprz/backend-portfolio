@@ -1,4 +1,4 @@
-package com.ruben.backendportfolio.api;
+package com.ruben.backendportfolio.health;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

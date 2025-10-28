@@ -1,7 +1,6 @@
 package com.ruben.backendportfolio.errors;
 
-import com.ruben.backendportfolio.items.ItemNotFoundException;
-import com.ruben.backendportfolio.items.NotFoundException;
+import com.ruben.backendportfolio.items.domain.ItemNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
