@@ -1,5 +1,9 @@
-package com.ruben.backendportfolio.items;
+package com.ruben.backendportfolio.items.web;
 
+import com.ruben.backendportfolio.items.domain.Item;
+import com.ruben.backendportfolio.items.dto.ItemCreateRequest;
+import com.ruben.backendportfolio.items.dto.ItemUpdateRequest;
+import com.ruben.backendportfolio.items.service.ItemService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

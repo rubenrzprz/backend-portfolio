@@ -1,4 +1,6 @@
-package com.ruben.backendportfolio.items;
+package com.ruben.backendportfolio.items.repository;
+
+import com.ruben.backendportfolio.items.domain.Item;
 
 import java.util.List;
 import java.util.Optional;

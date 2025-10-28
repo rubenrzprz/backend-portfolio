@@ -1,4 +1,6 @@
-package com.ruben.backendportfolio.items;
+package com.ruben.backendportfolio.items.domain;
+
+import com.ruben.backendportfolio.errors.NotFoundException;
 
 public class ItemNotFoundException extends NotFoundException {
     private final Long id;

@@ -1,6 +1,8 @@
-package com.ruben.backendportfolio.items;
+package com.ruben.backendportfolio.items.web;
 
 import com.ruben.backendportfolio.errors.GlobalExceptionHandler;
+import com.ruben.backendportfolio.items.domain.ItemNotFoundException;
+import com.ruben.backendportfolio.items.service.ItemService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

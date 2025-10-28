@@ -1,5 +1,10 @@
-package com.ruben.backendportfolio.items;
+package com.ruben.backendportfolio.items.service;
 
+import com.ruben.backendportfolio.items.domain.Item;
+import com.ruben.backendportfolio.items.domain.ItemNotFoundException;
+import com.ruben.backendportfolio.items.dto.ItemCreateRequest;
+import com.ruben.backendportfolio.items.dto.ItemUpdateRequest;
+import com.ruben.backendportfolio.items.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
