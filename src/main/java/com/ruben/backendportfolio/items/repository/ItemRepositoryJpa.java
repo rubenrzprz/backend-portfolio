@@ -1,8 +1,8 @@
 package com.ruben.backendportfolio.items.repository;
 
-import com.ruben.backendportfolio.data.TaskEntity;
-import com.ruben.backendportfolio.data.TaskJpaRepository;
 import com.ruben.backendportfolio.items.domain.Item;
+import com.ruben.backendportfolio.tasks.domain.TaskEntity;
+import com.ruben.backendportfolio.tasks.repository.TaskRepository;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
@@ -14,9 +14,9 @@ import java.util.Optional;
 @Primary // prefer this over any in-memory bean
 public class ItemRepositoryJpa implements ItemRepository {
 
-    private final TaskJpaRepository jpa;
+    private final TaskRepository jpa;
 
-    public ItemRepositoryJpa(TaskJpaRepository jpa) {
+    public ItemRepositoryJpa(TaskRepository jpa) {
         this.jpa = jpa;
     }
 
