@@ -24,18 +24,19 @@ concurrency:
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
+    # App/test env (no hard-coded creds)
     env:
       TZ: Europe/Lisbon
       SPRING_PROFILES_ACTIVE: test
       POSTGRES_HOST: localhost
-      POSTGRES_PORT: ${{ vars.CI_DB_PORT}}
-      POSTGRES_DB: ${{ vars.CI_DB_NAME}}
+      POSTGRES_PORT: ${{ vars.CI_DB_PORT }}      # e.g. 5432 (Actions → Variables)
+      POSTGRES_DB:   ${{ vars.CI_DB_NAME }}      # e.g. bp_db  (Actions → Variables)
       SPRING_DATASOURCE_USERNAME: ${{ secrets.CI_DB_USER }}
       SPRING_DATASOURCE_PASSWORD: ${{ secrets.CI_DB_PASS }}
+
     services:
       postgres:
         image: postgres:16
@@ -44,12 +45,10 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.CI_DB_PASS }}
           POSTGRES_DB: ${{ vars.CI_DB_NAME }}
         ports: [ "5432:5432" ]
-        # Mount your repo's sql/init/ into the Postgres init dir so schema + seed run automatically.
         options: >-
-          --health-cmd="pg_isready -U ${{ secrets.CI_DB_USER }} -d ${{ vars.CI_DB_NAME }}"
+          --health-cmd="pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"
           --health-interval=10s --health-timeout=5s --health-retries=5
-          -v ${{ github.workspace }}/sql/init:/docker-entrypoint-initdb.d:ro
-        
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -60,6 +59,33 @@ jobs:
           distribution: temurin
           java-version: "21"
           cache: maven
+
+      # Seed the database like your local Docker does (schema + seed)
+      - name: Wait for Postgres & seed schema/data
+        env:
+          PGPASSWORD: ${{ secrets.CI_DB_PASS }}
+          PGHOST: localhost
+          PGPORT: ${{ vars.CI_DB_PORT }}
+          PGUSER: ${{ secrets.CI_DB_USER }}
+          PGDATABASE: ${{ vars.CI_DB_NAME }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          for i in {1..30}; do
+            if pg_isready -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" -d "$PGDATABASE" >/dev/null 2>&1; then
+              echo "Postgres is ready"; break
+            fi
+            echo "Waiting for Postgres... ($i/30)"; sleep 2
+          done
+          if [ -f sql/init/schema.sql ]; then
+            psql -v ON_ERROR_STOP=1 -f sql/init/schema.sql
+          else
+            echo "sql/init/schema.sql not found, skipping"
+          fi
+          if [ -f sql/init/seed.sql ]; then
+            psql -v ON_ERROR_STOP=1 -f sql/init/seed.sql
+          else
+            echo "sql/init/seed.sql not found, skipping"
+          fi
 
       - name: Build & test (Maven)
         run: mvn -B -ntp clean verify
