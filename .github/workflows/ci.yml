@@ -1,0 +1,73 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      TZ: Europe/Lisbon
+      SPRING_PROFILES_ACTIVE: test
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: ${{ vars.CI_DB_PORT}}
+      POSTGRES_DB: ${{ vars.CI_DB_NAME}}
+      SPRING_DATASOURCE_USERNAME: ${{ secrets.CI_DB_USER }}
+      SPRING_DATASOURCE_PASSWORD: ${{ secrets.CI_DB_PASS }}
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ${{ secrets.CI_DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.CI_DB_PASS }}
+          POSTGRES_DB: ${{ vars.CI_DB_NAME }}
+        ports: [ "5432:5432" ]
+        # Mount your repo's sql/init/ into the Postgres init dir so schema + seed run automatically.
+        options: >-
+          --health-cmd="pg_isready -U ${{ secrets.CI_DB_USER }} -d ${{ vars.CI_DB_NAME }}"
+          --health-interval=10s --health-timeout=5s --health-retries=5
+          -v ${{ github.workspace }}/sql/init:/docker-entrypoint-initdb.d:ro
+        
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Temurin JDK 21 (Maven cache)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Build & test (Maven)
+        run: mvn -B -ntp clean verify
+
+      - name: Upload test reports (Surefire/Failsafe)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            **/target/surefire-reports/**
+            **/target/failsafe-reports/**
