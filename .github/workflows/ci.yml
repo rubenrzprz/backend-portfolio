@@ -1,0 +1,100 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    # App/test env (no hard-coded creds)
+    env:
+      TZ: Europe/Lisbon
+      SPRING_PROFILES_ACTIVE: test
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: ${{ vars.CI_DB_PORT }}      # e.g. 5432 (Actions → Variables)
+      POSTGRES_DB:   ${{ vars.CI_DB_NAME }}      # e.g. bp_db  (Actions → Variables)
+      SPRING_DATASOURCE_USERNAME: ${{ secrets.CI_DB_USER }}
+      SPRING_DATASOURCE_PASSWORD: ${{ secrets.CI_DB_PASS }}
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ${{ secrets.CI_DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.CI_DB_PASS }}
+          POSTGRES_DB: ${{ vars.CI_DB_NAME }}
+        ports: [ "5432:5432" ]
+        options: >-
+          --health-cmd="pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"
+          --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Temurin JDK 21 (Maven cache)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      # Seed the database like your local Docker does (schema + seed)
+      - name: Wait for Postgres & seed schema/data
+        env:
+          PGPASSWORD: ${{ secrets.CI_DB_PASS }}
+          PGHOST: localhost
+          PGPORT: ${{ vars.CI_DB_PORT }}
+          PGUSER: ${{ secrets.CI_DB_USER }}
+          PGDATABASE: ${{ vars.CI_DB_NAME }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y postgresql-client
+          for i in {1..30}; do
+            if pg_isready -h "$PGHOST" -p "$PGPORT" -U "$PGUSER" -d "$PGDATABASE" >/dev/null 2>&1; then
+              echo "Postgres is ready"; break
+            fi
+            echo "Waiting for Postgres... ($i/30)"; sleep 2
+          done
+          if [ -f sql/init/schema.sql ]; then
+            psql -v ON_ERROR_STOP=1 -f sql/init/schema.sql
+          else
+            echo "sql/init/schema.sql not found, skipping"
+          fi
+          if [ -f sql/init/seed.sql ]; then
+            psql -v ON_ERROR_STOP=1 -f sql/init/seed.sql
+          else
+            echo "sql/init/seed.sql not found, skipping"
+          fi
+
+      - name: Build & test (Maven)
+        run: mvn -B -ntp clean verify
+
+      - name: Upload test reports (Surefire/Failsafe)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            **/target/surefire-reports/**
+            **/target/failsafe-reports/**

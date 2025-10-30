@@ -3,6 +3,7 @@
 [![Java](https://img.shields.io/badge/Java-21-blue)](#)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.3-brightgreen)](#)
 [![License: MIT](https://img.shields.io/badge/License-MIT-lightgrey)](LICENSE)
+[![Java CI with Maven](https://github.com/rubenrzprz/backend-portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/rubenrzprz/backend-portfolio/actions/workflows/ci.yml)
 
 Focused backend engineering growth — disciplined practice, traceable outcomes. This repository documents a structured journey to build mastery in **Java, SQL, REST APIs, and DevOps fundamentals** while developing professional workflow and portfolio discipline.
 
@@ -12,18 +13,20 @@ Focused backend engineering growth — disciplined practice, traceable outcomes.
 
 1. [⚡ Quickstart](#-quickstart)
 2. [🧩 Project Snapshot](#-project-snapshot)
-3. [🏗️ Architecture](#️-architecture)
+3. [🏗️ Architecture](#-architecture)
 4. [📚 API Overview](#-api-overview)
-5. [🛠️ Configuration](#️-configuration)
+5. [🛠️ Configuration](#-configuration)
 6. [🧪 Postman](#-postman)
-7. [🗄️ Database](#️-database)
-8. [🗂️ Repository Structure](#️-repository-structure)
-9. [🧭 How to Explore](#-how-to-explore)
-10. [🔗 Useful Internal Docs](#-useful-internal-docs)
-11. [🗺️ Development Phases Overview](#️-development-phases-overview)
-12. [📅 Phase 1 — 14-Day Overview](#-phase-1--14-day-overview)
-13. [🎯 Personal Mission Statement](#-personal-mission-statement)
-14. [👤 Author](#-author)
+7. [🗄️ Database](#-database)
+8. [🗂️ Repository Structure](#-repository-structure)
+9. [🤖 Continuous Integration (GitHub Actions)](#-continuous-integration-github-actions)
+10. [🧭 How to Explore](#-how-to-explore)
+11. [🔗 Useful Internal Docs](#-useful-internal-docs)
+12. [🗺️ Development Phases Overview](#-development-phases-overview)
+13. [📅 Phase 1 — 14-Day Overview](#-phase-1--14-day-overview)
+14. [🎯 Personal Mission Statement](#-personal-mission-statement)
+15. [👤 Author](#-author)
+
 
 ---
 
@@ -152,6 +155,54 @@ graph TD
 ```
 
 ---
+
+## 🤖 Continuous Integration (GitHub Actions)
+
+This repository runs tests automatically on every push and pull request using **GitHub Actions**. The status badge at the top links to the latest runs.
+
+- **Workflow:** `.github/workflows/ci.yml`
+- **Triggers:** push (any branch), PR to `main`, manual `workflow_dispatch`
+- **Runtime:** Ubuntu runner, **Temurin JDK 21**, **Maven**
+- **Database in CI:** Postgres 16 service spun up for tests
+- **Seeding in CI:** `sql/init/schema.sql` and `sql/init/seed.sql` executed via `psql` before tests
+- **Artifacts:** Surefire/Failsafe reports uploaded as `test-reports`
+
+### One-time setup (Settings → Secrets and variables → Actions)
+
+| Name          | Type     | Example | Purpose |
+|---------------|----------|---------|---------|
+| `CI_DB_USER`  | Secret   | `app`   | DB user used by CI Postgres and Spring |
+| `CI_DB_PASS`  | Secret   | `app`   | DB password used by CI Postgres and Spring |
+| `CI_DB_NAME`  | Variable | `bp_db` | Database name used in CI |
+| `CI_DB_PORT`  | Variable | `5432`  | Database port used in CI |
+
+> No credentials are committed. Spring reads credentials from environment variables provided by Actions secrets/variables.
+
+### Run tests locally (parity)
+
+```bash
+# Start your local Postgres as in compose
+docker compose up -d db
+
+# Run the app tests with Maven
+mvn -B -ntp clean verify
+```
+
+### Read CI results
+
+1. Open the **Actions** tab → select the latest **CI** run → job **test**.
+2. On failures, expand the failing step to see stack traces.
+3. Download **Artifacts → test-reports** for detailed outputs:
+
+    * Maven: `target/surefire-reports/` and `target/failsafe-reports/`.
+
+### Troubleshooting
+
+* **DB connection/timeouts**: confirm `CI_DB_PORT=5432` and that the “Postgres is ready” log appears in the seeding step.
+* **Missing seed files**: ensure `sql/init/schema.sql` and `sql/init/seed.sql` exist or adjust their paths in the workflow.
+* **Tests assume preseeded data**: verify `seed.sql` inserts all required fixtures for integration tests.
+* **Secrets not configured**: missing `CI_DB_USER`/`CI_DB_PASS` will cause the Postgres service to fail to initialize.
+
 
 ## 🧭 How to Explore
 
