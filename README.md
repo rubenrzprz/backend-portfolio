@@ -232,7 +232,7 @@ mvn -B -ntp clean verify
 
 * **Phase 2 — Project Delivery (ResHub & StockBox)**
 
-    * **ResHub** (Hotel Reservation Manager) — main showcase project. 🔗 [ResHub](https://github.com/users/rubenrzprz/reshub)
+    * **ResHub** (Hotel Reservation Manager) — main showcase project. 🔗 [ResHub](https://github.com/rubenrzprz/reshub)
       Built with **Spring Boot + PostgreSQL** featuring:
 
         * JWT authentication & RBAC
@@ -270,9 +270,6 @@ mvn -B -ntp clean verify
 * **Day 8:** Dockerize app; local stack with `docker-compose`.
 * **Days 9–10:** CV, LinkedIn, portfolio polish (documentation and presentation).
 * **Days 11–14:** Basic CI with GitHub Actions; job materials; interview prep; Phase 2 plan.
-
-Track progress and daily execution on the Project Board: 🔗 Project Board — https://github.com/users/rubenrzprz/projects/2
-
 
 ## 📅 Phase 2 — 4-Week Overview
 
