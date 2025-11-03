@@ -227,16 +227,37 @@ mvn -B -ntp clean verify
 ## 🗺️ Development Phases Overview
 
 * **Phase 1 — Foundation & Positioning**
-  Git discipline (branching/commits/PRs), REST design + Postman, SQL (joins, subqueries, indexes, normalization), personal brand (CV, LinkedIn, pinned projects, mission).
+  Git discipline (branching, commits, PRs), REST design + Postman, SQL (joins, subqueries, indexes, normalization), personal brand (CV, LinkedIn, pinned projects, mission).
 
-* **Phase 2 — Project Delivery (ResHub, StockBox, Optional 3rd)**
+* **Phase 2 — Project Delivery (ResHub & StockBox)**
 
-    * **ResHub** (Hotel Reservation Manager): Spring Boot + PostgreSQL; JWT auth & RBAC; multi-tenant agencies; roles (MANAGER/RECEPTIONIST/AGENCY); **never delete — only cancel**; **Swagger/OpenAPI first**; start messaging with **RabbitMQ**.
-    * **StockBox** (Stock/Market insights backend): ingestion jobs + REST API; clean data model; pagination/filtering; documentation-first; room for ML/AI later.
-    * **Optional 3rd** (Streaming reservations): event-driven pipeline for reservation events; begin with **RabbitMQ**, plan for Kafka upgrade after Phase 2.
+    * **ResHub** (Hotel Reservation Manager) — main showcase project.
+      Built with **Spring Boot + PostgreSQL** featuring:
+
+        * JWT authentication & RBAC
+        * Multi-tenant design (agencies with MANAGER / RECEPTIONIST / AGENCY roles)
+        * Booking lifecycle (never delete → only cancel)
+        * Validation, pagination, and structured error handling
+        * **Swagger / OpenAPI-first** documentation
+        * Messaging foundation with **RabbitMQ** (future Kafka upgrade)
+        * Integration & containerized DB testing (Testcontainers)
+        * CI/CD with GitHub Actions and coverage reports
+
+    * **StockBox** (Stock / Market Insights API) — secondary project.
+      Backend for stock and market data ingestion, featuring:
+
+        * ETL-style ingestion jobs
+        * REST endpoints with pagination + filtering
+        * Clean data model + repository abstraction
+        * Documentation-first approach
+        * Room for ML/AI analytics extension after Phase 2
+
+    * **Optional 3rd (Streaming Service)** — event-driven pipeline prototype.
+      Streams reservation or financial events using **RabbitMQ**, later upgraded to **Kafka** for distributed event handling and observability experiments.
 
 * **Phase 3 — Professional Execution**
-  Production practices, hardened CI/CD, observability notes, targeted case studies of delivered projects.
+  Production practices, hardened CI/CD, observability, and case studies of delivered projects.
+  Focus on scalability, metrics, logging, and preparing the portfolio for hiring visibility.
 
 ---
 
@@ -250,6 +271,17 @@ mvn -B -ntp clean verify
 * **Days 11–14:** Basic CI with GitHub Actions; job materials; interview prep; Phase 2 plan.
 
 Track progress and daily execution on the Project Board: 🔗 Project Board — https://github.com/users/rubenrzprz/projects/2
+
+
+## 📅 Phase 2 — 4-Week Overview
+
+* **Week 1:** ResHub setup — repository, scaffold, `/health` endpoint, initial CI run.
+* **Week 2:** Core domain & persistence — entities, schema migrations, CRUD + validation.
+* **Week 3:** Auth / RBAC / business logic — JWT security, booking workflows, Postman coverage.
+* **Week 4:** Docs, testing, and StockBox kickoff — finalize ResHub docs + demo, start StockBox repo.
+
+Track progress and daily execution on the Project Board:
+🔗 [Backend Portfolio — Project Board](https://github.com/users/rubenrzprz/projects/2)
 
 ---
 
