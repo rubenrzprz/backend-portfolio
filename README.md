@@ -24,8 +24,9 @@ Focused backend engineering growth — disciplined practice, traceable outcomes.
 11. [🔗 Useful Internal Docs](#-useful-internal-docs)
 12. [🗺️ Development Phases Overview](#-development-phases-overview)
 13. [📅 Phase 1 — 14-Day Overview](#-phase-1--14-day-overview)
-14. [🎯 Personal Mission Statement](#-personal-mission-statement)
-15. [👤 Author](#-author)
+14. [📅 Phase 2 — 4-Week Overview](#-phase-2--4-week-overview)
+15. [🎯 Personal Mission Statement](#-personal-mission-statement)
+16. [👤 Author](#-author)
 
 
 ---
@@ -231,7 +232,7 @@ mvn -B -ntp clean verify
 
 * **Phase 2 — Project Delivery (ResHub & StockBox)**
 
-    * **ResHub** (Hotel Reservation Manager) — main showcase project.
+    * **ResHub** (Hotel Reservation Manager) — main showcase project. 🔗 [ResHub](https://github.com/users/rubenrzprz/reshub)
       Built with **Spring Boot + PostgreSQL** featuring:
 
         * JWT authentication & RBAC
