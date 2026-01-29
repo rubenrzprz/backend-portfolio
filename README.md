@@ -24,7 +24,7 @@ Focused backend engineering growth — disciplined practice, traceable outcomes.
 11. [🔗 Useful Internal Docs](#-useful-internal-docs)
 12. [🗺️ Development Phases Overview](#-development-phases-overview)
 13. [📅 Phase 1 — 14-Day Overview](#-phase-1--14-day-overview)
-14. [📅 Phase 2 — 4-Week Overview](#-phase-2--4-week-overview)
+14. [📅 Phase 2 — Project Description](#-phase-2--project-description)
 15. [🎯 Personal Mission Statement](#-personal-mission-statement)
 16. [👤 Author](#-author)
 
@@ -271,15 +271,12 @@ mvn -B -ntp clean verify
 * **Days 9–10:** CV, LinkedIn, portfolio polish (documentation and presentation).
 * **Days 11–14:** Basic CI with GitHub Actions; job materials; interview prep; Phase 2 plan.
 
-## 📅 Phase 2 — 4-Week Overview
+## 📅 Phase 2 — Project Description
 
-* **Week 1:** ResHub setup — repository, scaffold, `/health` endpoint, initial CI run.
-* **Week 2:** Core domain & persistence — entities, schema migrations, CRUD + validation.
-* **Week 3:** Auth / RBAC / business logic — JWT security, booking workflows, Postman coverage.
-* **Week 4:** Docs, testing, and StockBox kickoff — finalize ResHub docs + demo, start StockBox repo.
+Phase 2 delivers production-style backend projects with a strong focus on API design, security, data modeling, testability, and clear documentation.
 
-Track progress and daily execution on the Project Board:
-🔗 [Backend Portfolio — Project Board](https://github.com/users/rubenrzprz/projects/2)
+* **ResHub** (Hotel Reservation API) — secure, multi-tenant reservation system built with **Spring Boot + PostgreSQL** and **Flyway**. It demonstrates JWT auth with RBAC (MANAGER / RECEPTIONIST / AGENCY), robust search with pagination/sorting, CSV/JSON exports, idempotent `externalRef`, clean error handling, and integration tests with **Testcontainers**. Repo: [https://github.com/rubenrzprz/reshub](https://github.com/rubenrzprz/reshub)
+* **StockBox** (Stock / Market Insights API) — ingestion-focused backend with paginated/filterable REST endpoints, a clean data model and repository abstraction, documentation-first practices, and a base for future analytics extensions.
 
 ---
 
